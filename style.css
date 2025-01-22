@@ -371,6 +371,7 @@ main{
         top: 15px;
         right: 5px;
         z-index: 3;
+        background-color: #ff0000;
     }
 
     /* Content area */
