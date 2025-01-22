@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
-                console.log(data);
+                
                 const ArrBefore = [...data];
                 const shuffled= shuffleList(ArrBefore);
                 studentList = [...shuffled];
