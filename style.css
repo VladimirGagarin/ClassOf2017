@@ -216,8 +216,8 @@ main{
     }
 
     .circles {
-        bottom: 30px; /* Adjust bottom distance for smaller screens */
-        right: 10px; /* Adjust right distance for smaller screens */
+        bottom: 40px; /* Adjust bottom distance for smaller screens */
+        right: 15px; /* Adjust right distance for smaller screens */
     }
 
     .circle {
@@ -375,7 +375,7 @@ main{
 
     /* Content area */
     .descrption-content {
-        width: 90%; /* Make it take more width */
+        width: 80%; /* Make it take more width */
         padding: 15px; /* Reduce padding for smaller screens */
     }
 
