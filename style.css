@@ -377,6 +377,8 @@ main{
     .descrption-content {
         width: 80%; /* Make it take more width */
         padding: 15px; /* Reduce padding for smaller screens */
+        max-height: 60vh;
+        overflow-y: auto;
     }
 
     /* Header section */
