@@ -132,10 +132,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     else {
                         // Handle when element is out of view
-                        const li = entry.target;
-                        const playButton = li.querySelectorAll('.circles .circle')[0];
-                        playButton.innerHTML = '&#9654;'; // Change to play icon when out of view
-
+                        const allLis = container.querySelectorAll('li');
+                    
+                        allLis.forEach((li) => {
+                            const playButton = li.querySelector('.circles .circle');
+                            if (playButton) {
+                                playButton.innerHTML = '&#9654;'; // Reset to play icon
+                            }
+                        });
+                    
                         // If currently playing, pause it when out of view
                         if (currentReader && !currentReader.paused) {
                             currentReader.pause();
@@ -143,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             currentElement.state = false;
                         }
                     }
+                    
                 });
             },
             { root: null, threshold: 0.6 }
