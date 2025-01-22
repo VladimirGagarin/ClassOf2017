@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     else {
                         // Handle when element is out of view
                         const li = entry.target;
-                        const playButton = li.querySelector('.circles .circle');
+                        const playButton = li.querySelectorAll('.circles .circle')[0];
                         playButton.innerHTML = '&#9654;'; // Change to play icon when out of view
 
                         // If currently playing, pause it when out of view
