@@ -1,0 +1,521 @@
+* / {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: aliceblue;
+    --text-color: #000000;
+  }
+  
+  /* @media (prefers-color-scheme: dark) {
+    :root {
+      --background-color: #222;
+      --text-color: #ffffff;
+    }
+  } */
+  
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+header {
+    position: fixed;
+    top: 0; /* Stick to the very top */
+    z-index: 9999; /* Ensures it stays above other content */
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 3px 6px;
+    background-color: transparent; /* Header background */
+    border-bottom: 1px solid #0056b3; /* Optional border */
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    width: 100%;
+
+}
+  
+  /* Logo Styling */
+header .logo img {
+    height: 40px;
+    width: auto;
+}
+  
+  /* Title Styling */
+header .title h3 {
+    font-size: 1.3rem;
+    background-color: #000000;
+    color: goldenrod;
+    padding: 10px;
+}
+
+/* Media query for screens 768px or smaller */
+@media (max-width: 820px) {
+    header {
+        padding: 10px 20px; /* Increase padding for better spacing on smaller screens */
+        display: flex; /* Show header */
+        flex-direction: column; /* Align the logo and title in a row */
+        justify-content: space-around; /* Space between logo and title */
+    }
+
+    /* Logo Styling for smaller screens */
+    header .logo img {
+        height: 30px; /* Adjust logo size */
+    }
+
+    /* Title Styling for smaller screens */
+    header .title h3 {
+        font-size: 1rem; /* Slightly smaller text size */
+        padding: 8px;
+    }
+}
+
+/*-------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+main{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    padding-top: 10px;
+}
+
+.student-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory; /* Snap scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for mobile */
+    scrollbar-width: none;
+}
+
+.student-container::-webkit-scrollbar{
+    display: none;
+}
+
+  
+.student-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 40%;
+    height: 100%;
+  }
+  
+  .student-container ul li {
+    scroll-snap-align: start; /* Each item snaps into view */
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    background: linear-gradient(to bottom, #0056b3, rgb(151, 207, 255));
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column; /* Allow vertical stacking of elements if needed */
+    margin-bottom: 3px;
+
+}
+
+.student-container ul li:first-child{
+    margin-top: 5px;
+}
+  
+  /* Main Video */
+.main-content{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.main-content::before{
+    content: '';
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.4);
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.main-content > * {
+    position: relative;
+    z-index: 2;
+}
+
+.main-content img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    animation: myAnim3 2s ease 0s 1 normal forwards;
+}
+  
+  /* Circular Divs */
+.circles {
+    position: absolute;
+    bottom: 40px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Spacing between circles */
+    z-index: 3;
+}
+  
+.circle {
+    width: 50px;
+    height: 50px;
+    background-color: #000000;
+    color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+  
+.circle:hover {
+    transform: scale(1.1);
+    background-color: goldenrod;
+}
+
+.circle.liked {
+    color:#f9f9f9;
+    background-color: #eb0c83;
+    animation: myAnim 4s ease 0s 1 normal forwards;
+}
+
+/* Media query for screens 768px or smaller */
+@media (max-width: 820px) {
+    main{
+        padding: 0;
+    }
+    /* Adjust student-container for smaller screens */
+    .student-container ul {
+        width: 100%; /* Make the list take more width */
+    }
+
+    .student-container ul li {
+        height: 100%; /* Let items be shorter than the full height of the viewport */
+        border-radius: 1px;
+        margin-bottom: 0;
+    }
+
+    .circles {
+        bottom: 30px; /* Adjust bottom distance for smaller screens */
+        right: 10px; /* Adjust right distance for smaller screens */
+    }
+
+    .circle {
+        width: 40px; /* Smaller circle size */
+        height: 40px; /* Smaller circle size */
+        font-size: 1.5rem; /* Adjust font size for smaller screens */
+    }
+
+    /* Adjust main-content image for smaller screens */
+    .main-content img {
+        object-fit: cover; /* Prevent image stretching */
+    }
+}
+  
+@keyframes myAnim {
+	0% {
+		transform: scale3d(1, 1, 1);
+	}
+
+	30% {
+		transform: scale3d(0.75, 1.25, 1);
+	}
+
+	40% {
+		transform: scale3d(1.25, 0.75, 1);
+	}
+
+	50% {
+		transform: scale3d(0.85, 1.15, 1);
+	}
+
+	65% {
+		transform: scale3d(1.05, 0.95, 1);
+	}
+
+	75% {
+		transform: scale3d(0.95, 1.05, 1);
+	}
+
+	100% {
+		transform: scale3d(1, 1, 1);
+	}
+}
+@keyframes myAnim3 {
+	0% {
+		opacity: 0;
+		transform: translateX(-250px);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* General overlay styling */
+.description-ovelay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show the overlay when active */
+.description-ovelay.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Close button */
+.descrption-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.descrption-close span {
+    display: inline-block;
+    font-weight: bold;
+    padding: 5px 10px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.descrption-close span:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* Content area */
+.descrption-content {
+    background: linear-gradient(to bottom, #0056b3, rgb(8, 58, 101));
+    width: 90%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Header section */
+.description-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #824504;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.description-header h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f4f4f4;
+    margin: 0;
+}
+
+
+/* Content view section */
+.descripption-view {
+    font-size: 1rem;
+    color: #f9f9f9;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+/* Media query for screens 768px or smaller */
+@media (max-width: 820px) {
+    /* Adjust the overlay size */
+    .description-ovelay {
+        padding: 0; /* Add some padding around the overlay */
+    }
+
+    /* Adjust the close button position for smaller screens */
+    .descrption-close {
+        font-size: 1.6rem;
+        top: 15px;
+        right: 5px;
+        z-index: 3;
+    }
+
+    /* Content area */
+    .descrption-content {
+        width: 90%; /* Make it take more width */
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    /* Header section */
+    .description-header {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: flex-start; /* Align items to the left */
+        margin-bottom: 10px;
+    }
+
+    .description-header h3 {
+        font-size: 1.2rem; /* Adjust font size for smaller screens */
+    }
+
+    /* Content view section */
+    .descripption-view {
+        font-size: 0.9rem; /* Reduce font size slightly */
+    }
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+/* Container for the loading animation */
+.loading-animation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 02, 0.9); /* Light background */
+    z-index: 9999;
+    /* Optional fade-in effect for loading screen */
+}
+
+/* Image (Logo) */
+.loading-animation img {
+    width: auto; /* Adjust the size as needed */
+    height: 100px;
+    animation: myAnim4 2s ease 0s 1 normal forwards;
+}
+
+/* Container for the spans */
+.loading-spans {
+    display: flex;
+    gap: 10px; /* Adjust space between spans */
+    margin-top: 20px;
+    position: relative;
+}
+
+/* Style for each span */
+.loading-spans span {
+    width: 20px;
+    height: 20px;
+    background-color: #3498db; /* Blue color */
+    border-radius: 50%;
+    animation: spinCircle 2s infinite, fadeInOut 6s infinite;
+}
+
+/* Responsive styles for screens less than 768px */
+@media (max-width: 820px) {
+    /* Adjust logo size */
+    .loading-animation img {
+        height: 80px; /* Smaller logo for smaller screens */
+        width: 90%;
+    }
+
+    /* Adjust gap between spans */
+    .loading-spans {
+        gap: 8px; /* Reduced gap for better fit */
+    }
+
+    /* Adjust span size for smaller screens */
+    .loading-spans span {
+        width: 15px; /* Smaller circles */
+        height: 15px; /* Smaller circles */
+    }
+}
+
+/* Rotate and fade out each circle one at a time */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes spinCircle {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; }
+    25%, 75% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Offset each span's animation timing to create the staggered fade effect */
+.loading-spans span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loading-spans span:nth-child(2) {
+    animation-delay: 1s;
+}
+
+.loading-spans span:nth-child(3) {
+    animation-delay: 2s;
+}
+
+.loading-spans span:nth-child(4) {
+    animation-delay: 3s;
+}
+
+.loading-spans span:nth-child(5) {
+    animation-delay: 4s;
+}
+
+.loading-spans span:nth-child(6) {
+    animation-delay: 5s;
+}
+
+/* Fade in effect for the entire loading screen */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes myAnim4 {
+	0% {
+		opacity: 0;
+		transform: rotateX(-100deg);
+		transform-origin: top;
+	}
+
+	100% {
+		opacity: 1;
+		transform: rotateX(0deg);
+		transform-origin: top;
+	}
+}
