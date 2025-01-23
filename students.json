@@ -69,6 +69,16 @@
         "studentAudioReader": "readers/ndoloAudio.mp3",
         "studentRoles": ["Once prefect"],
         "studentFavColor": "black"
+    },
+    {
+        "studentName": "Paul Meijo",
+        "studentAdmissionNumber": 519,
+        "studentAlias": "Meijos",
+        "studentPhotos": ["photos/paulmeijo.jpeg"],
+        "studentDescription": "Paul Meijo was the epitome of strength and discipline, a student who left an indelible mark on the school. His unwavering commitment to excellence and his steadfast character made him a role model for his peers. Truly, Paul was one of the strongest and most disciplined individuals ever to grace the school halls.",
+        "studentAudioReader": "readers/pmeijoAudio.mp3",
+        "studentRoles": ["None"],
+        "studentFavColor": "red"
     }
     
     
