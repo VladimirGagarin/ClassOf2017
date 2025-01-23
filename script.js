@@ -4,11 +4,16 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentElement = {
         icon: null,
         element: null,
-        state: false
+        state: false,
+        student: null
     };
 
-    const LikedStudents = JSON.parse(localStorage.getItem("LikedStudents") || "[]");
+    let currentFavSong = null;
+    let currentStudentPhotoIndex = 0;
 
+    const LikedStudents = JSON.parse(localStorage.getItem("LikedStudents") || "[]");
+    let picChanger;
+    let  photoChanger;
     
 
     document.documentElement.scrollTop = 0; // For modern browsers
@@ -30,16 +35,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 const shuffled= shuffleList(ArrBefore);
                 studentList = [...shuffled];
 
-                populateStudents();
 
                 setTimeout(function() {
-                    document.querySelector('.loading-animation').style.display = 'none';
+                    document.querySelector('.loading-animation button').disabled = false;
                 },6000)
             })
             .catch((err) => {
                 console.error(err);
             });
     })();
+
+
+    document.querySelector('.loading-animation button').onclick = function () {
+        this.disabled = true;
+        document.querySelector('.loading-animation').style.display = 'none'
+        populateStudents()
+    }
 
     // Create empty <li> elements
     function populateStudents() {
@@ -58,109 +69,129 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Observe and populate <li> content in viewport
     function observeStudentProfiles(container) {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    const li = entry.target;
+                    const index = Array.from(container.children).indexOf(li);
 
-                    if (entry.isIntersecting) {
-                        const li = entry.target;
-                        const index = Array.from(container.children).indexOf(li);
-                       
-
-                        // Populate <li> with student data
-                        if (!li.innerHTML && studentList[index]) {
-                            const student = studentList[index];
-                            let currentImageIndex = 0;
-
-                            li.innerHTML = `
-                                <div class="main-content">
-                                    <img src="${student.studentPhotos[currentImageIndex]}" alt="Student_${student.studentAdmissionNumber}">
-                                </div>
-                                <div class="circles">
-                                    <div class="circle">&#9654;</div>
-                                    <div class="circle">&#10084;</div>
-                                    <div class="circle">${student.studentAdmissionNumber}</div>
-                                </div>`;
-
-                            // Add event listener to the play button
-                            const playButton = li.querySelectorAll('.circles .circle')[0];
-                            const likeButton = li.querySelectorAll('.circles .circle')[1];
-                            const imagButton = li.querySelectorAll('.circles .circle')[2];
-
-                            
-
-                            const isAlreadyLiked = LikedStudents.some(std => std.studentName === student.studentName);
-                            likeButton.classList.toggle('liked', isAlreadyLiked);
-                            
-                            playButton.onclick = function () {
-                                // Check if currentElement is null or undefined and toggle play/pause based on the current state
-                                const isCurrentlyPlaying = currentElement && currentElement.state && currentElement.element === li;
-                                playDescription(new Audio(student.studentAudioReader), playButton, li, !isCurrentlyPlaying);
-                                displayDescription(student);
-                            };
-
-                            likeButton.onclick = function () {
-                                const isLiked = LikedStudents.some(std => std.studentName === student.studentName);
-                        
-                                if (isLiked) {
-                                    // Remove student from LikedStudents
-                                    LikedStudents = LikedStudents.filter(s => s.studentName !== student.studentName);
-                                } else {
-                                    // Add student to LikedStudents
-                                    LikedStudents.push(student);
-                                }
-                        
-                                // Update localStorage and toggle button state
-                                localStorage.setItem("LikedStudents", JSON.stringify(LikedStudents));
-                                likeButton.classList.toggle('liked', !isLiked);
-                            };
-
-                            imagButton.onclick = function() {
-                                currentImageIndex = ( currentImageIndex + 1) % student.studentPhotos.length;
-                                li.querySelector('.main-content img').src = student.studentPhotos[currentImageIndex];
-                            }
-                            
-                        }
-
+                    // Populate <li> with student data
+                    if (!li.innerHTML && studentList[index]) {
                         const student = studentList[index];
+                        let currentImageIndex = 0;
 
-                        setTimeout(() => {
-                            document.querySelector('header').style.display = 'flex';
-                        }, 2000);
+                        li.innerHTML = `
+                            <div class="main-content">
+                                <img src="${student.studentPhotos[currentImageIndex]}" alt="Student_${student.studentAdmissionNumber}">
+                            </div>
+                            <div class="circles">
+                                <div class="circle">&#9654;</div>
+                                <div class="circle">&#10084;</div>
+                                <div class="circle">${student.studentAdmissionNumber}</div>
+                                <div class="circle">&#9835;</div>
+                            </div>`;
 
-                        document.querySelector('header .title h3').textContent = student.studentName;
-                        document.querySelector('main').style.backgroundColor =  student.studentFavColor
-                        setTimeout(() => {
-                            document.querySelector('header').style.display = 'none';
-                        }, 5000);
-                    }
-                    else {
-                        // Handle when element is out of view
-                        const allLis = container.querySelectorAll('li');
-                    
-                        allLis.forEach((li) => {
-                            const playButton = li.querySelector('.circles .circle');
-                            if (playButton) {
-                                playButton.innerHTML = '&#9654;'; // Reset to play icon
+                        currentElement.student = student;
+                        currentElement.element = li;
+
+                        const playButton = li.querySelectorAll('.circles .circle')[0];
+                        const likeButton = li.querySelectorAll('.circles .circle')[1];
+                        const imagButton = li.querySelectorAll('.circles .circle')[2];
+                        const songButton = li.querySelectorAll('.circles .circle')[3];
+
+                        const isAlreadyLiked = LikedStudents.some(std => std.studentName === student.studentName);
+                        likeButton.classList.toggle('liked', isAlreadyLiked);
+
+                        playButton.onclick = function () {
+                            if (currentFavSong && !currentFavSong.paused) {
+                                currentFavSong.pause();
                             }
-                        });
-                    
-                        // If currently playing, pause it when out of view
-                        if (currentReader && !currentReader.paused) {
-                            currentReader.pause();
-                            currentReader = null; // Reset currentReader
-                            currentElement.state = false;
-                        }
-                    }
-                    
-                });
-            },
-            { root: null, threshold: 0.6 }
-        );
+                            const isCurrentlyPlaying = currentElement && currentElement.state && currentElement.element === li;
+                            playDescription(new Audio(student.studentAudioReader), playButton, li, !isCurrentlyPlaying);
+                            displayDescription(student);
+                        };
 
-        // Observe each <li>
-        container.querySelectorAll('li').forEach((li) => observer.observe(li));
+                        likeButton.onclick = function () {
+                            const isLiked = LikedStudents.some(std => std.studentName === student.studentName);
+                            if (isLiked) {
+                                LikedStudents = LikedStudents.filter(s => s.studentName !== student.studentName);
+                            } else {
+                                LikedStudents.push(student);
+                            }
+                            localStorage.setItem("LikedStudents", JSON.stringify(LikedStudents));
+                            likeButton.classList.toggle('liked', !isLiked);
+                        };
+
+                        imagButton.onclick = function () {
+                            currentImageIndex = (currentImageIndex + 1) % student.studentPhotos.length;
+                            li.querySelector('.main-content img').src = student.studentPhotos[currentImageIndex];
+                            if (currentFavSong && !currentFavSong.paused) {
+                                currentFavSong.pause();
+                            }
+                        };
+
+                        songButton.onclick = function () {
+                            clearInterval(picChanger);
+                            currentStudentPhotoIndex = 0;
+                            currentElement.element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                            if (currentFavSong && !currentFavSong.paused) {
+                                currentFavSong.pause();
+                            }
+                            showMedia(student);
+                        };
+                    }
+
+                    const student = studentList[index];
+                    setTimeout(() => {
+                        document.querySelector('header').style.display = 'flex';
+                    }, 2000);
+                    document.querySelector('header .title h3').textContent = student.studentName;
+                    document.querySelector('main').style.backgroundColor = student.studentFavColor;
+                    setTimeout(() => {
+                        document.querySelector('header').style.display = 'none';
+                    }, 5000);
+
+                    playFavSong(student, true, li);
+                } else {
+                    // Handle when element is out of view
+                    if (currentElement) {
+                        const student = currentElement.student;
+                        const li = currentElement.element;
+                        playFavSong(student, false, li);
+                        currentFavSong = null;
+                        picChanger = null;
+                    }
+                }
+            });
+        },
+        { root: null, threshold: 0.6 }
+    );
+
+    // Observe each <li>
+    container.querySelectorAll('li').forEach((li) => observer.observe(li));
+
+    // Manually handle the first student
+    const firstLi = container.querySelector('li');
+    if (firstLi && studentList[0]) {
+        const student = studentList[0];
+        playFavSong(student, true, firstLi);
+        // Populate the first student's data if necessary
+        if (!firstLi.innerHTML) {
+            firstLi.innerHTML = `
+                <div class="main-content">
+                    <img src="${student.studentPhotos[0]}" alt="Student_${student.studentAdmissionNumber}">
+                </div>
+                <div class="circles">
+                    <div class="circle">&#9654;</div>
+                    <div class="circle">&#10084;</div>
+                    <div class="circle">${student.studentAdmissionNumber}</div>
+                    <div class="circle">&#9835;</div>
+                </div>`;
+        }
     }
+}
+
 
      // Function to play/pause audio
      function playDescription(reader, playBtn, element, status) {
@@ -230,6 +261,125 @@ document.addEventListener("DOMContentLoaded", function () {
     
         return fragmentList; // Return the shuffled array after the loop
     }
+
+    function showMedia(student) {
+        let currentIndex = 0;
+        const overlay = document.querySelector('.media-overlay');
+        const closeBtn = document.querySelector('.media-close');
+        const quoteContent = document.querySelector('.quote-content');
+    
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            if(currentFavSong) {
+                currentFavSong.pause();
+            }
+
+            clearInterval(photoChanger);
+        });
+    
+        function showOverlay() {
+            overlay.classList.add('active');
+        }
+    
+        showOverlay();
+        document.querySelector('.media-content').style.backgroundImage = `url('${student.studentPhotos[currentIndex]}')`;
+    
+        currentFavSong = new Audio(student.studentFavSong);
+        
+        // Clear previous intervals before starting a new one
+        if (photoChanger) {
+            clearInterval(photoChanger);
+        }
+
+        currentFavSong.play();
+
+        quoteContent.innerHTML = `<h3>${student.studentName}</h3><p>${student.studentQuote}</p>`
+    
+        // Once the audio metadata is loaded, calculate the change interval
+        currentFavSong.addEventListener('loadedmetadata', function () {
+            const duration = currentFavSong.duration; // Total duration of the song
+            const photoChangeInterval = duration / student.studentPhotos.length; // Time per photo
+    
+            photoChanger = setInterval(() => {
+                currentIndex = (currentIndex + 1) % student.studentPhotos.length;
+                document.querySelector('.media-content').style.backgroundImage = `url('${student.studentPhotos[currentIndex]}')`;
+            }, photoChangeInterval * 1000); // Convert seconds to milliseconds
+    
+            // Stop changing photos when the song ends
+            currentFavSong.addEventListener('ended', () => {
+                clearInterval(photoChanger);
+                overlay.classList.remove('active');
+            });
+        });
+    }
+
+    function showLoading(state) {
+         document.querySelector('.loading-animation').style.display = state ? "flex" :'none'
+    }
+
+    function playFavSong(student ,state, element) {
+        
+        if (currentFavSong && currentFavSong.src !== student.studentFavSong) {
+            currentFavSong.pause();
+            currentFavSong.currentTime = 0; // Reset playback position
+        }
+        
+        currentFavSong = new Audio(student.studentFavSong);
+        
+
+        if(state){
+            currentFavSong.play();
+            currentFavSong.addEventListener('loadedmetadata', function () {
+                const duration = this.duration;
+                const interval = duration / student.studentPhotos.length
+
+                picChanger = setInterval(function () {
+                    currentStudentPhotoIndex = (currentStudentPhotoIndex + 1) % student.studentPhotos.length;
+    
+                    const img = element.querySelector('.main-content img');
+                    img.style.opacity = 0; // Start fade-out animation
+                    setTimeout(() => {
+                        img.src = student.studentPhotos[currentStudentPhotoIndex];
+                        img.style.opacity = 1; // Fade-in after the photo updates
+                    }, 500); // Match the fade-out duration in CSS
+                }, interval * 1000);
+
+                this.addEventListener('ended', () => {
+                    clearInterval(picChanger);
+                    currentStudentPhotoIndex = 0;
+                    element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                })
+            });
+
+            currentFavSong.addEventListener('waiting', function() {
+                showLoading(true);
+            });
+
+            currentFavSong.addEventListener('error', function() {
+                showLoading(true);
+            });
+
+            currentFavSong.addEventListener('stalled', function() {
+                showLoading(true);
+            });
+
+            currentFavSong.addEventListener('playing', function() {
+                showLoading(false);
+            });
+        }
+        else{
+            
+            if (currentFavSong) {
+                currentFavSong.pause();
+                currentFavSong.currentTime = 0;
+                clearInterval(picChanger);
+            }
+
+            currentStudentPhotoIndex = 0;
+            element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+        }
+    }
+    
     
 });
 
