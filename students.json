@@ -7,7 +7,9 @@
         "studentDescription": "Charles Kihuyu, known fondly as Cole Charmton, is a beacon of brilliance and humility. With a mind as sharp as a freshly honed blade and a heart as steadfast as a mountain, he stands as a paragon of intelligence and God-fearing values. His captivating charm and natural grace make him a shining star among his peers, while his academic prowess and unwavering commitment to excellence earn him the admiration of teachers and students alike. A born leader, Charles navigates his responsibilities as Team Leader and Prefect with the finesse of a seasoned captain steering a ship through uncharted waters. Truly, he is the principal's pride and a role model whose light inspires others to shine.",
         "studentAudioReader": "readers/charlesAudio.mp3",
         "studentRoles": ["Team leader", "Prefect"],
-        "studentFavColor": "Blue"
+        "studentFavColor": "Blue",
+        "studentFavSong": "readers/charlesfav.mp3",
+        "studentQuote": "With a mind that charts the stars and a heart that anchors the soul, true greatness isn’t what he seeks—it’s who he is."
     },
     {
         "studentName": "Selestine Mwavali",
@@ -17,7 +19,9 @@
         "studentDescription": "Selestine Mwavali served as the longest-serving Head Girl in the history of the school, exemplifying exceptional leadership skills. She led her peers with determination, vision, and a strong sense of responsibility, consistently fostering a spirit of unity and excellence. A top-performing student, she excelled academically while balancing her numerous leadership roles, including serving as the School Captain, Prefect, and Team Leader. Apart from her academic and leadership prowess, Selestine was also a remarkable choir singer and leader, inspiring her fellow choir members with her powerful voice and dedication to the craft. Her contributions to both academics and extracurricular activities have left a lasting impact on the school community.",
         "studentAudioReader": "readers/selestineAudio.mp3",
         "studentRoles": ["School Captain", "Prefect", "Team leader"],
-        "studentFavColor": "Yellow"
+        "studentFavColor": "Yellow",
+        "studentFavSong": "readers/seelestinefav.mp3",
+        "studentQuote": "In every step she takes, she carries the strength of a leader, the voice of an inspiration, and the light of a legacy that will echo through time."
     }
     ,
     {
@@ -28,7 +32,9 @@
         "studentDescription": "Lydiah Wambui, also known as Lydez Hialy, is regarded as one of the most beautiful souls to ever grace our school, often referred to as an angel for her kindness, grace, and radiant presence. Beyond her stunning beauty, she is also a top-performing student who consistently excelled academically. Lydiah's dedication to her work was unparalleled, making her a role model for her peers. A former prefect, environmentalist, and thinker, she demonstrated remarkable leadership and an unwavering commitment to making the world around her a better place. Her contributions, both inside and outside the classroom, have made a profound impact on everyone who has had the privilege of knowing her.",
         "studentAudioReader": "readers/lydiahAudio.mp3",
         "studentRoles": ["Once Prefect", "Environmentalist", "Think tank"],
-        "studentFavColor": "#673806"
+        "studentFavColor": "#673806",
+        "studentFavSong": "readers/lydiahfav.mp3",
+        "studentQuote": "The world needs you to be you."
     },
     {
         "studentName": "Kelvin Mulinka",
@@ -38,7 +44,9 @@
         "studentDescription": "Kelvin Mulinka, known as 'Skiver,' is a true masterpiece of creativity and ingenuity. Renowned for his unparalleled ability to craft moments that endure forever, he transforms ordinary experiences into extraordinary memories. With a mind brimming with innovative ideas, Kelvin seamlessly blends intelligence and beauty, shaping concepts that inspire and captivate. Though he held no official role, his influence was profound, as he consistently infused his surroundings with thought-provoking creativity and a unique perspective. Whether through his artistry, problem-solving, or thoughtful interactions, Mulinka left an indelible mark as a visionary whose imagination knew no bounds.",
         "studentAudioReader": "readers/mulinkaAudio.mp3",
         "studentRoles": ["Creative Innovator"],
-        "studentFavColor": "green"
+        "studentFavColor": "green",
+        "studentFavSong": "readers/unknown.mp3",
+        "studentQuote": "Creativity turns the ordinary into the extraordinary—imagine beyond limits."
     },
     {
         "studentName": "Nancy Kinona",
@@ -48,7 +56,9 @@
         "studentDescription": "Nancy Kinona, known as 'Silenter,' was the epitome of quiet strength. Her reserved demeanor masked a brilliant observant mind that saw and understood everything with remarkable clarity. A paragon of discipline, she upheld the highest standards of behavior and was admired for her impeccable sense of style, always weaving her love for fashion into an elegant expression of her personality. Nancy's presence was a calming force, a silent yet profound reminder that true power often lies in observing, reflecting, and leading by example.",
         "studentAudioReader": "readers/nancyAudio.mp3",
         "studentRoles": ["none"],
-        "studentFavColor": "#980d9b"
+        "studentFavColor": "#980d9b",
+         "studentFavSong": "readers/nancyfav.mp3",
+         "studentQuote" :"Strength speaks louder in silence; observe, reflect, and lead with grace."
     },
     {
         "studentName": "Ahmed Fahad",
@@ -58,17 +68,21 @@
         "studentDescription": "Ahmed Fahad, fondly known as 'Tallest,' stood not only as the tallest among his peers but also as a towering figure of kindness and generosity. A devout follower of Islam, he carried his faith with grace, embodying the virtues of compassion and selflessness. Ahmed was a beacon of inspiration, always uplifting those around him with his words of encouragement and acts of benevolence. As a motivator, his wisdom and empathy resonated deeply, leaving a legacy of hope and positivity that will forever echo through the hearts of those who knew him.",
         "studentAudioReader": "readers/fahadAudio.mp3",
         "studentRoles": ["Islam leader"],
-        "studentFavColor": "purple"
+        "studentFavColor": "purple",
+        "studentFavSong": "readers/fahadfav.mp3",
+        "studentQuote" : "True height is measured not in stature, but in the kindness you extend to others."
     },
     {
         "studentName": "Denis Ndolo",
-        "studentAdmissionNumber": 520,
+        "studentAdmissionNumber": 502,
         "studentAlias": "Ndolo",
         "studentPhotos": ["photos/ndolo.jpeg","photos/ndolo02.jpeg", "photos/ndolo03.jpeg"],
         "studentDescription": "Denis Ndolo was a master planner, known for his impeccable organizational skills and flawless execution of ideas. His innocent demeanor added a touch of charm, making him approachable and relatable to everyone. A true tableau vivant of a superhero, he effortlessly embodied qualities of strength, resilience, and unwavering determination, inspiring those around him.",
         "studentAudioReader": "readers/ndoloAudio.mp3",
         "studentRoles": ["Once prefect"],
-        "studentFavColor": "black"
+        "studentFavColor": "black",
+        "studentFavSong": "readers/kevofav.mp3",
+        "studentQuote" :"With every plan you execute, remember: the true strength lies in the resilience to see it through."
     },
     {
         "studentName": "Paul Meijo",
@@ -78,7 +92,9 @@
         "studentDescription": "Paul Meijo was the epitome of strength and discipline, a student who left an indelible mark on the school. His unwavering commitment to excellence and his steadfast character made him a role model for his peers. Truly, Paul was one of the strongest and most disciplined individuals ever to grace the school halls.",
         "studentAudioReader": "readers/pmeijoAudio.mp3",
         "studentRoles": ["None"],
-        "studentFavColor": "red"
+        "studentFavColor": "red",
+        "studentFavSong": "readers/paulmeijofav.mp3",
+        "studentQuote" : "True strength is not in never falling, but in rising every time you do."
     }
     
     
