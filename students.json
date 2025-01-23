@@ -59,6 +59,16 @@
         "studentAudioReader": "readers/fahadAudio.mp3",
         "studentRoles": ["Islam leader"],
         "studentFavColor": "purple"
+    },
+    {
+        "studentName": "Denis Ndolo",
+        "studentAdmissionNumber": 520,
+        "studentAlias": "Ndolo",
+        "studentPhotos": ["photos/ndolo.jpeg","photos/ndolo02.jpeg", "photos/ndolo03.jpeg"],
+        "studentDescription": "Denis Ndolo was a master planner, known for his impeccable organizational skills and flawless execution of ideas. His innocent demeanor added a touch of charm, making him approachable and relatable to everyone. A true tableau vivant of a superhero, he effortlessly embodied qualities of strength, resilience, and unwavering determination, inspiring those around him.",
+        "studentAudioReader": "readers/ndoloAudio.mp3",
+        "studentRoles": ["Once prefect"],
+        "studentFavColor": "black"
     }
     
     
