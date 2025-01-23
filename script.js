@@ -123,12 +123,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
 
                         const student = studentList[index];
-                        document.querySelector('header').style.display = 'flex';
+
+                        setTimeout(() => {
+                            document.querySelector('header').style.display = 'flex';
+                        }, 2000);
+
                         document.querySelector('header .title h3').textContent = student.studentName;
                         document.querySelector('main').style.backgroundColor =  student.studentFavColor
                         setTimeout(() => {
                             document.querySelector('header').style.display = 'none';
-                        }, 2000);
+                        }, 5000);
                     }
                     else {
                         // Handle when element is out of view
