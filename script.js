@@ -69,23 +69,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Observe and populate <li> content in viewport
     function observeStudentProfiles(container) {
-    const observer = new IntersectionObserver(
-        (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    const li = entry.target;
-                    const index = Array.from(container.children).indexOf(li);
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const li = entry.target;
+                        const index = Array.from(container.children).indexOf(li);
+                        let isFavSongMuted = false;
+                        
 
                     // Populate <li> with student data
                     if (!li.innerHTML && studentList[index]) {
                         const student = studentList[index];
                         let currentImageIndex = 0;
+                        
 
                         li.innerHTML = `
                             <div class="main-content">
                                 <img src="${student.studentPhotos[currentImageIndex]}" alt="Student_${student.studentAdmissionNumber}">
                             </div>
                             <div class="circles">
+                                 <div class="circle"><i class="fas fa-volume-up"></i></div>
                                 <div class="circle">&#9654;</div>
                                 <div class="circle">&#10084;</div>
                                 <div class="circle">${student.studentAdmissionNumber}</div>
@@ -95,15 +99,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         currentElement.student = student;
                         currentElement.element = li;
 
-                        const playButton = li.querySelectorAll('.circles .circle')[0];
-                        const likeButton = li.querySelectorAll('.circles .circle')[1];
-                        const imagButton = li.querySelectorAll('.circles .circle')[2];
-                        const songButton = li.querySelectorAll('.circles .circle')[3];
+                        const  muteButton = li.querySelectorAll('.circles .circle')[0];
+                        const playButton = li.querySelectorAll('.circles .circle')[1];
+                        const likeButton = li.querySelectorAll('.circles .circle')[2];
+                        const imagButton = li.querySelectorAll('.circles .circle')[3];
+                        const songButton = li.querySelectorAll('.circles .circle')[4];
+
+                        imagButton.classList.add('unchattered')
 
                         const isAlreadyLiked = LikedStudents.some(std => std.studentName === student.studentName);
                         likeButton.classList.toggle('liked', isAlreadyLiked);
 
                         playButton.onclick = function () {
+                            clearInterval(picChanger);
                             if (currentFavSong && !currentFavSong.paused) {
                                 currentFavSong.pause();
                             }
@@ -113,22 +121,27 @@ document.addEventListener("DOMContentLoaded", function () {
                         };
 
                         likeButton.onclick = function () {
-                            const isLiked = LikedStudents.some(std => std.studentName === student.studentName);
-                            if (isLiked) {
+                            // Check if the student is already liked
+                            const isAlreadyLiked = LikedStudents.some(std => std.studentName === student.studentName);
+                        
+                            if (isAlreadyLiked) {
+                                // Remove student from LikedStudents if already liked
                                 LikedStudents = LikedStudents.filter(s => s.studentName !== student.studentName);
                             } else {
+                                // Add student to LikedStudents if not already liked
                                 LikedStudents.push(student);
                             }
+                        
+                            // Update localStorage
                             localStorage.setItem("LikedStudents", JSON.stringify(LikedStudents));
-                            likeButton.classList.toggle('liked', !isLiked);
+                        
+                            // Reflect the updated state in the UI
+                            likeButton.classList.toggle('liked', !isAlreadyLiked);
                         };
+                        
 
                         imagButton.onclick = function () {
-                            currentImageIndex = (currentImageIndex + 1) % student.studentPhotos.length;
-                            li.querySelector('.main-content img').src = student.studentPhotos[currentImageIndex];
-                            if (currentFavSong && !currentFavSong.paused) {
-                                currentFavSong.pause();
-                            }
+                            console.log(student)
                         };
 
                         songButton.onclick = function () {
@@ -140,6 +153,17 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                             showMedia(student);
                         };
+
+                        muteButton.onclick = function() {
+                            isFavSongMuted = !isFavSongMuted;
+
+                            if(currentFavSong) {
+                                currentFavSong.muted = isFavSongMuted;
+                                
+                            }
+
+                            muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>'
+                        }
                     }
 
                     const student = studentList[index];
@@ -161,6 +185,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         playFavSong(student, false, li);
                         currentFavSong = null;
                         picChanger = null;
+                        isFavSongMuted = false;
+                        const  muteButton = li.querySelectorAll('.circles .circle')[0];
+                        muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>'
+                        
+
                     }
                 }
             });
@@ -183,14 +212,89 @@ document.addEventListener("DOMContentLoaded", function () {
                     <img src="${student.studentPhotos[0]}" alt="Student_${student.studentAdmissionNumber}">
                 </div>
                 <div class="circles">
+                    <div class="circle"><i class="fas fa-volume-up"></i></div>
                     <div class="circle">&#9654;</div>
                     <div class="circle">&#10084;</div>
                     <div class="circle">${student.studentAdmissionNumber}</div>
                     <div class="circle">&#9835;</div>
                 </div>`;
-        }
+
+                const  muteButton = firstLi.querySelectorAll('.circles .circle')[0];
+                const playButton = firstLi.querySelectorAll('.circles .circle')[1];
+                const likeButton = firstLi.querySelectorAll('.circles .circle')[2];
+                const imagButton = firstLi.querySelectorAll('.circles .circle')[3];
+                const songButton = firstLi.querySelectorAll('.circles .circle')[4];
+
+                imagButton.classList.add('unchattered');
+
+                const isAlreadyLiked = LikedStudents.some(std => std.studentName === student.studentName);
+                likeButton.classList.toggle('liked', isAlreadyLiked);
+
+                let isFavSongMuted = false;
+                muteButton.onclick = function() {
+                    isFavSongMuted = !isFavSongMuted;
+
+                    if(currentFavSong) {
+                        currentFavSong.muted = isFavSongMuted;
+                        
+                    }
+
+                    muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>'
+                }
+
+                songButton.onclick = function () {
+                    clearInterval(picChanger);
+                    currentStudentPhotoIndex = 0;
+                    currentElement.element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                    if (currentFavSong && !currentFavSong.paused) {
+                        currentFavSong.pause();
+                    }
+                    showMedia(student);
+                };
+
+                likeButton.onclick = function () {
+                    const isLiked = LikedStudents.some(std => std.studentName === student.studentName);
+                    if (isLiked) {
+                        LikedStudents = LikedStudents.filter(s => s.studentName !== student.studentName);
+                        likeButton.classList.toggle('liked', !isLiked);
+                    } else {
+                        LikedStudents.push(student);
+                        likeButton.classList.toggle('liked', isLiked);
+                    }
+                    localStorage.setItem("LikedStudents", JSON.stringify(LikedStudents));
+                    likeButton.classList.toggle('liked', !isLiked);
+                };
+
+                playButton.onclick = function () {
+                    clearInterval(picChanger);
+                    if (currentFavSong && !currentFavSong.paused) {
+                        currentFavSong.pause();
+                    }
+                    const isCurrentlyPlaying = currentElement && currentElement.state && currentElement.element === firstLi;
+                    playDescription(new Audio(student.studentAudioReader), playButton, firstLi, !isCurrentlyPlaying);
+                    displayDescription(student);
+                };
+
+                 // Reset mute button state when out of viewport
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (!entry.isIntersecting) {
+                            // Reset mute button state
+                            isFavSongMuted = false;
+                            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+                            if (currentFavSong) {
+                                currentFavSong.muted = isFavSongMuted;
+                            }
+                        }
+                    });
+                }, { threshold: 0.1 }); // Adjust threshold if needed
+
+                observer.observe(firstLi);
+            }
+        }  
+        
     }
-}
+
 
 
      // Function to play/pause audio
@@ -325,13 +429,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         
         currentFavSong = new Audio(student.studentFavSong);
-        
+        let reloadInterval;
+        let count = 0;
 
         if(state){
             currentFavSong.play();
             currentFavSong.addEventListener('loadedmetadata', function () {
                 const duration = this.duration;
                 const interval = duration / student.studentPhotos.length
+
+                clearInterval(reloadInterval);
+                count = 0;
 
                 picChanger = setInterval(function () {
                     currentStudentPhotoIndex = (currentStudentPhotoIndex + 1) % student.studentPhotos.length;
@@ -353,18 +461,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
             currentFavSong.addEventListener('waiting', function() {
                 showLoading(true);
+
+                reloadInterval = setInterval(() => {
+                    count++;
+                    if(count >= 5) {
+                        window.location.reload();
+
+                    }
+                }, 1000);
             });
 
             currentFavSong.addEventListener('error', function() {
                 showLoading(true);
+                reloadInterval = setInterval(() => {
+                    count++;
+                    if(count >= 5) {
+                        window.location.reload();
+                        
+                    }
+                }, 1000);
             });
 
             currentFavSong.addEventListener('stalled', function() {
                 showLoading(true);
+                reloadInterval = setInterval(() => {
+                    count++;
+                    if(count >= 5) {
+                        window.location.reload();
+                        
+                    }
+                }, 1000);
             });
 
             currentFavSong.addEventListener('playing', function() {
                 showLoading(false);
+                clearInterval(reloadInterval);
+                count = 0;
             });
         }
         else{
