@@ -64,7 +64,7 @@
         "studentName": "Ahmed Fahad",
         "studentAdmissionNumber": 507,
         "studentAlias": "Tallest",
-        "studentPhotos": ["photos/fahad.jpg"],
+        "studentPhotos": ["photos/fahad.jpg", "photos/fahad02.jpeg"],
         "studentDescription": "Ahmed Fahad, fondly known as 'Tallest,' stood not only as the tallest among his peers but also as a towering figure of kindness and generosity. A devout follower of Islam, he carried his faith with grace, embodying the virtues of compassion and selflessness. Ahmed was a beacon of inspiration, always uplifting those around him with his words of encouragement and acts of benevolence. As a motivator, his wisdom and empathy resonated deeply, leaving a legacy of hope and positivity that will forever echo through the hearts of those who knew him.",
         "studentAudioReader": "readers/fahadAudio.mp3",
         "studentRoles": ["Islam leader"],
@@ -95,7 +95,20 @@
         "studentFavColor": "red",
         "studentFavSong": "readers/paulmeijofav.mp3",
         "studentQuote" : "True strength is not in never falling, but in rising every time you do."
+    },
+    {
+        "studentName": "David Royse",
+        "studentAdmissionNumber": 533,
+        "studentAlias": "Rolls Royce",
+        "studentPhotos": ["photos/royse.jpeg","photos/royse02.jpg"],
+        "studentDescription": "David Royse, fondly known as 'Rolls Royce,' is a top-performing student celebrated for his dedication and seriousness in academics. Beyond the classroom, he's an incredible artist and rapper, using his talent to create meaningful art that resonates with many. He cherishes every moment spent at St. Christopher High, making lasting memories with his peers.",
+        "studentAudioReader": "readers/royseAudio.mp3",
+        "studentRoles": ["Think Tank", "Once Prefect"],
+        "studentFavColor": "yellow",
+        "studentFavSong": "readers/roysefav.mp3",
+        "studentQuote" : "Success is no accident; it’s the result of hard work, talent, and passion."
     }
+    
     
     
 ]
