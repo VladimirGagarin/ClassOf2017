@@ -194,6 +194,13 @@ main{
     background-color: goldenrod;
 }
 
+.circle.unchattered {
+    transform: scale(1.1);
+    background-color: #f00;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
 .circle.liked {
     color:#f9f9f9;
     background-color: #eb0c83;
