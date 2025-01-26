@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.scrollTop = 0; // For older browsers or compatibility
 
 
-    // Fetch data
+   // Fetch data
     (function () {
         fetch('students.json')
             .then((response) => {
@@ -30,15 +30,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then((data) => {
-                
+                // Ensure Lydiah Wambui is always first
+                const lydiahIndex = data.findIndex(student => student.studentName === "Lydiah Wambui");
+                if (lydiahIndex !== -1) {
+                    const lydiah = data.splice(lydiahIndex, 1)[0]; // Remove Lydiah from the array
+                    data.unshift(lydiah); // Add her to the beginning
+                }
+
                 const ArrBefore = [...data];
-                const shuffled= shuffleList(ArrBefore);
+                const shuffled = shuffleList(ArrBefore);
                 studentList = [...shuffled];
 
-
                 setTimeout(function() {
-                    document.querySelector('.loading-animation button').disabled = false;
-                },6000)
+                    document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
+                        btn.disabled = false;
+                    });
+                }, 6000);
             })
             .catch((err) => {
                 console.error(err);
@@ -46,11 +53,162 @@ document.addEventListener("DOMContentLoaded", function () {
     })();
 
 
-    document.querySelector('.loading-animation button').onclick = function () {
-        this.disabled = true;
+
+    document.querySelectorAll('.loading-animation .controls-actions button')[0].onclick = function () {
+        document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
+            btn.disabled = true;
+        })
         document.querySelector('.loading-animation').style.display = 'none'
         populateStudents()
     }
+
+    document.querySelectorAll('.loading-animation .controls-actions button')[1].onclick = function () {
+        document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
+            btn.disabled = true;
+        });
+        let isPlayingVid = false;
+        let isMuted = false;
+
+         document.querySelector('.loading-animation').style.display = 'none'
+        document.querySelector('.video-overlay').style.display = 'flex'
+        
+        const  video = document.querySelector('.video-overlay .video-content video');
+        const playBtn = document.querySelectorAll('.video-overlay .video-content .video-controls .video-buttons button')[0];
+        const muteBtn = document.querySelectorAll('.video-overlay .video-content .video-controls .video-buttons button')[1];
+        const bar = document.querySelector('.video-overlay .video-content .video-controls .progress-truck .progress-bar');
+        const controls = document.querySelector('.video-overlay .video-content .video-controls');
+
+
+        playBtn.onclick = function () {
+            isPlayingVid = !isPlayingVid;
+
+            playBtn.innerHTML = isPlayingVid ? '&#10074;&#10074;' : '&#9654;';
+
+            if(isPlayingVid){video.play();}
+            else{video.pause();}
+
+        }
+
+        muteBtn.onclick = () => {
+            isMuted = !isMuted;
+            muteBtn.innerHTML = isMuted  ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>';
+
+            video.muted = isMuted;
+        }
+
+        video.ontimeupdate = () => {
+            bar.style.width = `${(video.currentTime / video.duration) * 100}%`
+        }
+
+        video.addEventListener('playing' , function() {
+            showLoading(false);
+            setTimeout(() => {
+                controls.style.display = ' none';
+            },5000)
+        });
+
+        video.addEventListener('mouseout' , function() {
+            setTimeout(() => {
+                controls.style.display = ' none';
+            },5000)
+        });
+
+        video.addEventListener('touchstart' , function() {
+            setTimeout(() => {
+                controls.style.display = ' flex';
+            },100)
+        });
+
+        video.addEventListener('mouseover' , function() {
+            setTimeout(() => {
+                controls.style.display = ' flex';
+            },100)
+        });
+
+        video.addEventListener('mousemove' , function() {
+            setTimeout(() => {
+                controls.style.display = ' flex';
+            },100)
+        });
+
+        video.addEventListener('waiting' , function() {
+            controls.style.display = ' flex';
+            showLoading(true);
+        });
+
+        video.addEventListener('stalled' , function() {
+            controls.style.display = ' flex';
+            showLoading(true);
+        });
+
+        video.addEventListener('ended' , function() {
+            controls.style.display = ' flex';
+            showLoading(false);
+            isPlayingVid = false;
+            playBtn.innerHTML = isPlayingVid ? '&#10074;&#10074;' : '&#9654;';
+            bar.style.width = '0%'
+        });
+
+        video.addEventListener('error' , function() {
+            controls.style.display = ' flex';
+            showLoading(true);
+
+            setTimeout(function() {
+                window.location.reload();
+            },6000);
+        });
+
+        document.querySelector('.video-close').onclick = function () {
+            video.pause();
+            video.currentTime = 0;
+            video.muted = false;
+            playBtn.innerHTML = '&#9654;';
+            muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+
+            document.querySelector('.loading-animation').style.display = 'none'
+            document.querySelector('.video-overlay').style.display = 'none'
+            populateStudents();
+        }
+
+        let isFullScreen = false; // Flag to track full-screen state
+
+        // Function to enter full-screen mode
+        function enterFullScreen() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen(); // Safari support
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen(); // IE/Edge support
+            }
+            isFullScreen = true;
+        }
+
+        // Function to exit full-screen mode
+        function exitFullScreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen(); // Safari support
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen(); // IE/Edge support
+            }
+            isFullScreen = false;
+        }
+
+        // Function to toggle full-screen mode
+        function toggleFullScreen() {
+            if (isFullScreen) {
+                exitFullScreen();
+            } else {
+                enterFullScreen();
+            }
+        }
+
+        // Add double-click event listener to the video
+        video.addEventListener('dblclick', toggleFullScreen);
+    }
+
 
     // Create empty <li> elements
     function populateStudents() {
@@ -90,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             </div>
                             <div class="circles">
                                  <div class="circle"><i class="fas fa-volume-up"></i></div>
-                                <div class="circle">&#9654;</div>
+                                <div class="circle"><i class="fa-solid fa-circle-info"></i></div>
                                 <div class="circle">&#10084;</div>
                                 <div class="circle">${student.studentAdmissionNumber}</div>
                                 <div class="circle">&#9835;</div>
@@ -162,7 +320,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 
                             }
 
-                            muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>'
+                            muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>';
                         }
                     }
 
@@ -213,7 +371,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
                 <div class="circles">
                     <div class="circle"><i class="fas fa-volume-up"></i></div>
-                    <div class="circle">&#9654;</div>
+                    <div class="circle"><i class="fa-solid fa-circle-info"></i></div>
                     <div class="circle">&#10084;</div>
                     <div class="circle">${student.studentAdmissionNumber}</div>
                     <div class="circle">&#9835;</div>
@@ -418,7 +576,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showLoading(state) {
-         document.querySelector('.loading-animation').style.display = state ? "flex" :'none'
+        document.querySelector('.loading-animation').style.display = state ? "flex" :'none'
+        document.querySelector('.loading-animation').classList.toggle('loader', state)
     }
 
     function playFavSong(student ,state, element) {
@@ -468,7 +627,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location.reload();
 
                     }
-                }, 1000);
+                }, 10000);
             });
 
             currentFavSong.addEventListener('error', function() {
@@ -479,7 +638,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location.reload();
                         
                     }
-                }, 1000);
+                }, 30000);
             });
 
             currentFavSong.addEventListener('stalled', function() {
@@ -490,7 +649,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location.reload();
                         
                     }
-                }, 1000);
+                }, 30000);
             });
 
             currentFavSong.addEventListener('playing', function() {
