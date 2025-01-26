@@ -80,7 +80,7 @@
         "studentDescription": "Denis Ndolo was a master planner, known for his impeccable organizational skills and flawless execution of ideas. His innocent demeanor added a touch of charm, making him approachable and relatable to everyone. A true tableau vivant of a superhero, he effortlessly embodied qualities of strength, resilience, and unwavering determination, inspiring those around him.",
         "studentAudioReader": "readers/ndoloAudio.mp3",
         "studentRoles": ["Once prefect"],
-        "studentFavColor": "black",
+        "studentFavColor": "orange",
         "studentFavSong": "readers/kevofav.mp3",
         "studentQuote" :"With every plan you execute, remember: the true strength lies in the resilience to see it through."
     },
@@ -107,7 +107,20 @@
         "studentFavColor": "yellow",
         "studentFavSong": "readers/roysefav.mp3",
         "studentQuote" : "Success is no accident; it’s the result of hard work, talent, and passion."
+    },
+    {
+        "studentName": "Diew Chol",
+        "studentAdmissionNumber": 475,
+        "studentAlias": "Vendetta",
+        "studentPhotos": ["photos/diew.jpg", "photos/diew02.jpg"],
+        "studentDescription": "Diew, known affectionately as Vendetta, was a beacon of joy and creativity whose vibrant spirit mirrored the essence of Caribbean life—full of rhythm, warmth, and passion. His legacy as a Creative Innovator will forever linger in our hearts, reminding us of his ability to bring color and imagination to everything he touched. Diew’s love for life was as vast as the ocean, and his laughter and charisma will echo in our memories like a timeless melody.",
+        "studentAudioReader": "readers/diewAudio.mp3",
+        "studentRoles": ["Creative Innovator"],
+        "studentFavColor": "#800200",
+        "studentFavSong": "readers/diewfav.mp3",
+        "studentQuote": "In the waves of life, I found my rhythm and danced to the beat of my dreams"
     }
+    
     
     
     
