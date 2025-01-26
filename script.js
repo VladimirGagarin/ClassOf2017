@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // If another audio is playing, pause it
         if (currentReader && currentReader !== reader) {
             currentReader.pause();
-            currentElement.icon.innerHTML = '&#9654;'; // Change to play icon
+            currentElement.icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>'; // Change to play icon
             currentElement.state = false;
         }
 
@@ -473,14 +473,14 @@ document.addEventListener("DOMContentLoaded", function () {
             document.body.style.overflow = "hidden"
         } else {
             currentReader.pause();
-            currentElement.icon.innerHTML = '&#9654;'; // Change to play icon
+            currentElement.icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>'; // Change to play icon
             currentElement.state = false;
             document.querySelector('.description-ovelay').classList.remove('active');
         }
 
         currentReader.onended = function () {
             status = false;
-            currentElement.icon.innerHTML = '&#9654;'; // Change to play icon
+            currentElement.icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>'; // Change to play icon
             currentElement.state = false;
         }
 
@@ -490,7 +490,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector('.description-ovelay').classList.remove('active');
         if(currentReader && currentElement) {
             currentReader.pause();
-            currentElement.icon.innerHTML = '&#9654;'; // Change to play icon
+            currentElement.icon.innerHTML = '<i class="fa-solid fa-circle-info"></i>'; // Change to play icon
             currentElement.state = false;
         }
 
@@ -613,7 +613,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 this.addEventListener('ended', () => {
                     clearInterval(picChanger);
                     currentStudentPhotoIndex = 0;
-                    element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                    const img = element.querySelector('.main-content img');
+                    img.src = student.studentPhotos[currentStudentPhotoIndex];
+                    //element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
                 })
             });
 
