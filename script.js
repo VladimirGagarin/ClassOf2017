@@ -20,37 +20,36 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.scrollTop = 0; // For older browsers or compatibility
 
 
-   // Fetch data
-    (function () {
-        fetch('students.json')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to load data");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                // Ensure Lydiah Wambui is always first
-                const lydiahIndex = data.findIndex(student => student.studentName === "Lydiah Wambui");
-                if (lydiahIndex !== -1) {
-                    const lydiah = data.splice(lydiahIndex, 1)[0]; // Remove Lydiah from the array
-                    data.unshift(lydiah); // Add her to the beginning
-                }
+    fetch('students.json')
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Failed to load data");
+        }
+        return response.json();
+    })
+    .then((data) => {
+        const ArrBefore = [...data];
+        const shuffled = shuffleList(ArrBefore);
 
-                const ArrBefore = [...data];
-                const shuffled = shuffleList(ArrBefore);
-                studentList = [...shuffled];
+        // Ensure Lydiah Wambui is always first
+        const lydiahIndex = shuffled.findIndex(student => student.studentName === "Lydiah Wambui");
+        if (lydiahIndex !== -1) {
+            const lydiah = shuffled.splice(lydiahIndex, 1)[0]; // Remove Lydiah from the shuffled array
+            shuffled.unshift(lydiah); // Add her to the beginning
+        }
 
-                setTimeout(function() {
-                    document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
-                        btn.disabled = false;
-                    });
-                }, 6000);
-            })
-            .catch((err) => {
-                console.error(err);
+        studentList = [...shuffled];
+
+        setTimeout(function() {
+            document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
+                btn.disabled = false;
             });
-    })();
+        }, 6000);
+    })
+    .catch((err) => {
+        console.error(err);
+    });
+
 
 
 
