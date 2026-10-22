@@ -10,10 +10,61 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let currentFavSong = null;
     let currentStudentPhotoIndex = 0;
+    let introTimer = null;
+    let hasStarted = false;
 
-    const LikedStudents = JSON.parse(localStorage.getItem("LikedStudents") || "[]");
+    let LikedStudents = JSON.parse(localStorage.getItem("LikedStudents") || "[]");
     let picChanger;
     let  photoChanger;
+
+    function escapeHtml(value = "") {
+        return String(value).replace(/[&<>"']/g, (char) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[char]));
+    }
+
+    function slugifyName(name = "") {
+        return name
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+    }
+
+    function cardMarkup(student) {
+        const name = student.studentName;
+        const alias = (student.studentAlias || "").trim();
+        const slug = student.studentSlug || slugifyName(name);
+        const alt = `${name}${alias ? ` (${alias})` : ""}, Class of 2017`;
+
+        return `
+            <div class="card-phone">
+                <span class="card-phone-notch" aria-hidden="true"></span>
+                <div class="main-content">
+                    <img src="${student.studentPhotos[0]}" alt="${escapeHtml(alt)}" loading="lazy" decoding="async">
+                </div>
+                <div class="card-info">
+                    ${alias ? `<p class="card-alias">${escapeHtml(alias)}</p>` : ""}
+                    <h2 class="card-name">${escapeHtml(name)}</h2>
+                    <div class="card-actions">
+                        <a class="profile-link" href="students/${slug}/">View profile <i class="fas fa-arrow-right"></i></a>
+                        <button type="button" class="save-image" aria-label="Save this card as an image"><i class="fas fa-camera"></i> Save as image</button>
+                    </div>
+                </div>
+                <div class="circles">
+                    <div class="circle" title="Mute favourite song" aria-label="Mute favourite song"><i class="fas fa-volume-up"></i></div>
+                    <div class="circle" title="Play tribute and read description" aria-label="Play tribute and read description"><i class="fa-solid fa-circle-info"></i></div>
+                    <div class="circle" title="Like this student" aria-label="Like this student">&#10084;</div>
+                    <div class="circle" title="Admission number" aria-label="Admission number">${student.studentAdmissionNumber}</div>
+                    <div class="circle" title="Play favourite song" aria-label="Play favourite song">&#9835;</div>
+                </div>
+            </div>`;
+    }
     
 
     document.documentElement.scrollTop = 0; // For modern browsers
@@ -28,8 +79,24 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
     })
     .then((data) => {
-        const ArrBefore = [...data];
-        const shuffled = shuffleList(ArrBefore);
+        const usedSlugs = new Set();
+        const withSlugs = data.map((student) => {
+            const fallback = slugifyName(student.studentName) || "student";
+            let slug = fallback;
+            if (usedSlugs.has(slug)) {
+                slug = `${fallback}-${student.studentAdmissionNumber}`;
+            }
+            let candidate = slug;
+            let counter = 2;
+            while (usedSlugs.has(candidate)) {
+                candidate = `${slug}-${counter}`;
+                counter += 1;
+            }
+            usedSlugs.add(candidate);
+            return { ...student, studentSlug: candidate };
+        });
+
+        const shuffled = shuffleList([...withSlugs]);
 
         // Ensure Lydiah Wambui is always first
         const lydiahIndex = shuffled.findIndex(student => student.studentName === "Lydiah Wambui");
@@ -38,33 +105,118 @@ document.addEventListener("DOMContentLoaded", function () {
             shuffled.unshift(lydiah); // Add her to the beginning
         }
 
-        studentList = [...shuffled];
+        studentList = shuffled;
+        preloadStudents();
 
-        setTimeout(function() {
-            document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
-                btn.disabled = false;
-            });
-        }, 6000);
+        introTimer = window.setTimeout(startExperience, 2800);
     })
     .catch((err) => {
         console.error(err);
     });
 
-
-
-
-    document.querySelectorAll('.loading-animation .controls-actions button')[0].onclick = function () {
-        document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
-            btn.disabled = true;
-        })
-        document.querySelector('.loading-animation').style.display = 'none'
-        populateStudents()
+    function startExperience() {
+        if (hasStarted) {
+            return;
+        }
+        hasStarted = true;
+        if (introTimer) {
+            clearTimeout(introTimer);
+            introTimer = null;
+        }
+        const loading = document.querySelector('.loading-animation');
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        populateStudents();
     }
 
-    document.querySelectorAll('.loading-animation .controls-actions button')[1].onclick = function () {
-        document.querySelectorAll('.loading-animation .controls-actions button').forEach(btn => {
-            btn.disabled = true;
-        });
+    async function saveCardAsImage(li, student) {
+        const phone = li.querySelector('.card-phone') || li;
+        const mainContent = phone.querySelector('.main-content');
+        const image = mainContent ? mainContent.querySelector('img') : null;
+
+        if (typeof html2canvas !== 'function' || li.dataset.saving === 'true') {
+            return;
+        }
+
+        li.dataset.saving = 'true';
+
+        if (document.fonts && document.fonts.ready) {
+            await document.fonts.ready.catch(() => {});
+        }
+
+        const photoSrc = image ? (image.currentSrc || image.src) : null;
+        let restorePhoto = null;
+
+        if (mainContent && image && photoSrc) {
+            await new Promise((resolve) => {
+                const preload = new Image();
+                preload.onload = resolve;
+                preload.onerror = resolve;
+                preload.src = photoSrc;
+            });
+
+            const previousBackground = mainContent.style.backgroundImage;
+            const previousSize = mainContent.style.backgroundSize;
+            const previousPosition = mainContent.style.backgroundPosition;
+            const previousDisplay = image.style.display;
+
+            mainContent.style.backgroundImage = `url("${photoSrc}")`;
+            mainContent.style.backgroundSize = 'cover';
+            mainContent.style.backgroundPosition = 'center';
+            image.style.display = 'none';
+
+            restorePhoto = () => {
+                mainContent.style.backgroundImage = previousBackground;
+                mainContent.style.backgroundSize = previousSize;
+                mainContent.style.backgroundPosition = previousPosition;
+                image.style.display = previousDisplay;
+            };
+        }
+
+        try {
+            const canvas = await html2canvas(phone, {
+                backgroundColor: null,
+                scale: Math.min(3, Math.max(2, window.devicePixelRatio || 2)),
+                useCORS: true,
+                logging: false,
+                imageTimeout: 15000
+            });
+            const link = document.createElement('a');
+            link.download = `${student.studentSlug || slugifyName(student.studentName)}-class-of-2017.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        } catch (error) {
+            console.error(error);
+        } finally {
+            if (restorePhoto) {
+                restorePhoto();
+            }
+            delete li.dataset.saving;
+        }
+    }
+
+    document.querySelector('main').addEventListener('click', function (event) {
+        const saveButton = event.target.closest('.save-image');
+        if (!saveButton) {
+            return;
+        }
+        const li = saveButton.closest('li');
+        if (!li) {
+            return;
+        }
+        const index = Array.from(li.parentElement.children).indexOf(li);
+        const student = studentList[index];
+        if (student) {
+            saveCardAsImage(li, student);
+        }
+    });
+
+    document.querySelector('.intro-trailer').onclick = function () {
+        if (introTimer) {
+            clearTimeout(introTimer);
+            introTimer = null;
+        }
         let isPlayingVid = false;
         let isMuted = false;
 
@@ -164,9 +316,8 @@ document.addEventListener("DOMContentLoaded", function () {
             playBtn.innerHTML = '&#9654;';
             muteBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
 
-            document.querySelector('.loading-animation').style.display = 'none'
-            document.querySelector('.video-overlay').style.display = 'none'
-            populateStudents();
+            document.querySelector('.video-overlay').style.display = 'none';
+            startExperience();
         }
 
         let isFullScreen = false; // Flag to track full-screen state
@@ -209,18 +360,70 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Create empty <li> elements
-    function populateStudents() {
+    function buildAddStudentCard() {
+        const students = studentList.slice(0, 10);
+        const shuffled = [...students].sort(() => Math.random() - 0.5);
+        const picked = shuffled.slice(0, 3);
+        const faces = picked.map((student) => {
+            const photo = (student.studentPhotos || [])[0] || 'logo.png';
+            return `<div class="add-student-cta-face"><img src="${photo}" alt="${escapeHtml(student.studentName)}" loading="lazy" decoding="async"></div>`;
+        }).join('');
+
+        return `
+            <li>
+                <div class="add-student-cta-card">
+                    <div class="add-student-cta-content">
+                        <p class="add-student-cta-kicker">Class of 2017</p>
+                        <h2>Missing someone?</h2>
+                        <p>Add a fellow classmate to the archive so their story can live on.</p>
+                    </div>
+                    <div class="add-student-cta-faces">
+                        ${faces || `<div class="add-student-cta-face"><img src="logo.png" alt="Alumni MMXVII"></div>`}
+                    </div>
+                    <div class="add-student-cta-actions">
+                        <a class="add-student-cta-btn" href="add-student/"><i class="fas fa-user-plus"></i> Add a new student</a>
+                    </div>
+                </div>
+            </li>`;
+    }
+
+    function preloadStudents() {
         const studentContainer = document.querySelector('main .student-container ul');
-        if (studentList.length === 0) {
+        if (!studentContainer || studentList.length === 0) {
             return;
         }
 
-        studentList.forEach(() => {
-            const li = document.createElement('li'); // Create empty <li>
+        studentList.forEach((student) => {
+            const li = document.createElement('li');
+            li.style.setProperty('--accent', student.studentFavColor || '#0056b3');
             studentContainer.appendChild(li);
+
+            (student.studentPhotos || []).slice(0, 3).forEach((src) => {
+                const image = new Image();
+                image.src = src;
+            });
         });
 
+        const addLi = document.createElement('li');
+        addLi.innerHTML = buildAddStudentCard().replace('<li>', '').replace('</li>', '');
+        studentContainer.appendChild(addLi);
+
+        if (studentList[0]) {
+            document.querySelector('main').style.setProperty('--page-accent', studentList[0].studentFavColor || '#0056b3');
+        }
+    }
+
+    function populateStudents() {
+        const studentContainer = document.querySelector('main .student-container ul');
+        if (studentList.length === 0 || studentContainer.dataset.observed === 'true') {
+            return;
+        }
+
+        if (studentContainer.children.length === 0) {
+            preloadStudents();
+        }
+
+        studentContainer.dataset.observed = 'true';
         observeStudentProfiles(studentContainer);
     }
 
@@ -241,17 +444,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         let currentImageIndex = 0;
                         
 
-                        li.innerHTML = `
-                            <div class="main-content">
-                                <img src="${student.studentPhotos[currentImageIndex]}" alt="Student_${student.studentAdmissionNumber}">
-                            </div>
-                            <div class="circles">
-                                 <div class="circle"><i class="fas fa-volume-up"></i></div>
-                                <div class="circle"><i class="fa-solid fa-circle-info"></i></div>
-                                <div class="circle">&#10084;</div>
-                                <div class="circle">${student.studentAdmissionNumber}</div>
-                                <div class="circle">&#9835;</div>
-                            </div>`;
+                        li.innerHTML = cardMarkup(student);
 
                         currentElement.student = student;
                         currentElement.element = li;
@@ -304,7 +497,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         songButton.onclick = function () {
                             clearInterval(picChanger);
                             currentStudentPhotoIndex = 0;
-                            currentElement.element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                            const cardImage = li.querySelector('.main-content img');
+                            if (cardImage) {
+                                cardImage.src = student.studentPhotos[currentStudentPhotoIndex];
+                            }
                             if (currentFavSong && !currentFavSong.paused) {
                                 currentFavSong.pause();
                             }
@@ -324,29 +520,23 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
 
                     const student = studentList[index];
-                    setTimeout(() => {
-                        document.querySelector('header').style.display = 'flex';
-                    }, 2000);
-                    document.querySelector('header .title h3').textContent = student.studentName;
-                    document.querySelector('main').style.backgroundColor = student.studentFavColor;
-                    setTimeout(() => {
-                        document.querySelector('header').style.display = 'none';
-                    }, 5000);
+                    li.style.setProperty('--accent', student.studentFavColor || '#0056b3');
+                    document.querySelector('main').style.setProperty('--page-accent', student.studentFavColor || '#0056b3');
 
                     playFavSong(student, true, li);
                 } else {
                     // Handle when element is out of view
-                    if (currentElement) {
+                    if (currentElement && currentElement.student && currentElement.element) {
                         const student = currentElement.student;
                         const li = currentElement.element;
                         playFavSong(student, false, li);
                         currentFavSong = null;
                         picChanger = null;
                         isFavSongMuted = false;
-                        const  muteButton = li.querySelectorAll('.circles .circle')[0];
-                        muteButton.innerHTML = isFavSongMuted ? '<i class="fas fa-volume-xmark"></i>' : '<i class="fas fa-volume-up"></i>'
-                        
-
+                        const muteButton = li.querySelectorAll('.circles .circle')[0];
+                        if (muteButton) {
+                            muteButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+                        }
                     }
                 }
             });
@@ -358,23 +548,17 @@ document.addEventListener("DOMContentLoaded", function () {
     container.querySelectorAll('li').forEach((li) => observer.observe(li));
 
     // Manually handle the first student
-    const firstLi = container.querySelector('li');
+    const firstLi = Array.from(container.querySelectorAll('li')).find((li) => li.querySelector('.card-phone'));
     if (firstLi && studentList[0]) {
         const student = studentList[0];
+        currentElement.student = student;
+        currentElement.element = firstLi;
+        firstLi.style.setProperty('--accent', student.studentFavColor || '#0056b3');
+        document.querySelector('main').style.setProperty('--page-accent', student.studentFavColor || '#0056b3');
         playFavSong(student, true, firstLi);
         // Populate the first student's data if necessary
-        if (!firstLi.innerHTML) {
-            firstLi.innerHTML = `
-                <div class="main-content">
-                    <img src="${student.studentPhotos[0]}" alt="Student_${student.studentAdmissionNumber}">
-                </div>
-                <div class="circles">
-                    <div class="circle"><i class="fas fa-volume-up"></i></div>
-                    <div class="circle"><i class="fa-solid fa-circle-info"></i></div>
-                    <div class="circle">&#10084;</div>
-                    <div class="circle">${student.studentAdmissionNumber}</div>
-                    <div class="circle">&#9835;</div>
-                </div>`;
+            if (!firstLi.innerHTML || !firstLi.querySelector('.card-phone')) {
+                firstLi.innerHTML = cardMarkup(student);
 
                 const  muteButton = firstLi.querySelectorAll('.circles .circle')[0];
                 const playButton = firstLi.querySelectorAll('.circles .circle')[1];
@@ -402,7 +586,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 songButton.onclick = function () {
                     clearInterval(picChanger);
                     currentStudentPhotoIndex = 0;
-                    currentElement.element.querySelector('.main-content img').src = student.studentPhotos[currentStudentPhotoIndex];
+                    const cardImage = firstLi.querySelector('.main-content img');
+                    if (cardImage) {
+                        cardImage.src = student.studentPhotos[currentStudentPhotoIndex];
+                    }
                     if (currentFavSong && !currentFavSong.paused) {
                         currentFavSong.pause();
                     }
@@ -527,48 +714,119 @@ document.addEventListener("DOMContentLoaded", function () {
         let currentIndex = 0;
         const overlay = document.querySelector('.media-overlay');
         const closeBtn = document.querySelector('.media-close');
-        const quoteContent = document.querySelector('.quote-content');
-    
-        closeBtn.addEventListener('click', () => {
-            overlay.classList.remove('active');
-            if(currentFavSong) {
-                currentFavSong.pause();
-            }
+        const art = document.querySelector('.beatsync-photo');
+        const nameEl = document.querySelector('.media-name');
+        const quoteEl = document.querySelector('.media-quote');
+        const progressBar = document.querySelector('.media-progress span');
+        const currentTimeEl = document.querySelector('.media-current');
+        const durationEl = document.querySelector('.media-duration');
 
-            clearInterval(photoChanger);
-        });
-    
-        function showOverlay() {
-            overlay.classList.add('active');
+        if (!overlay) {
+            return;
         }
-    
-        showOverlay();
-        document.querySelector('.media-content').style.backgroundImage = `url('${student.studentPhotos[currentIndex]}')`;
-    
+
+        const photos = student.studentPhotos && student.studentPhotos.length
+            ? student.studentPhotos
+            : ['logo.png'];
+
+        const formatTime = (value) => {
+            if (!Number.isFinite(value) || value < 0) {
+                return '0:00';
+            }
+            const minutes = Math.floor(value / 60);
+            const seconds = Math.floor(value % 60).toString().padStart(2, '0');
+            return `${minutes}:${seconds}`;
+        };
+
+        const setPhoto = (index) => {
+            if (art) {
+                art.style.backgroundImage = `url('${photos[index]}')`;
+                art.classList.remove('is-changing');
+                void art.offsetWidth;
+                art.classList.add('is-changing');
+            }
+        };
+
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                overlay.classList.remove('active');
+                if (currentFavSong) {
+                    currentFavSong.pause();
+                }
+                clearInterval(photoChanger);
+                photoChanger = null;
+            };
+        }
+
+        overlay.classList.add('active');
+        setPhoto(currentIndex);
+
+        if (currentFavSong) {
+            currentFavSong.pause();
+        }
+
         currentFavSong = new Audio(student.studentFavSong);
-        
+        const track = currentFavSong;
+
         // Clear previous intervals before starting a new one
         if (photoChanger) {
             clearInterval(photoChanger);
+            photoChanger = null;
         }
 
-        currentFavSong.play();
+        track.play().catch(() => {});
 
-        quoteContent.innerHTML = `<h3>${student.studentName}</h3><p>${student.studentQuote}</p>`
-    
+        if (nameEl) {
+            nameEl.textContent = student.studentName;
+        }
+        if (quoteEl) {
+            quoteEl.textContent = student.studentQuote || 'A favourite song from the Class of 2017.';
+        }
+        if (progressBar) {
+            progressBar.style.width = '0%';
+        }
+        if (currentTimeEl) {
+            currentTimeEl.textContent = '0:00';
+        }
+        if (durationEl) {
+            durationEl.textContent = '0:00';
+        }
+
+        const updateProgress = () => {
+            if (currentFavSong !== track) {
+                return;
+            }
+            const duration = track.duration || 0;
+            const progress = duration ? (track.currentTime / duration) * 100 : 0;
+            if (progressBar) {
+                progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+            }
+            if (currentTimeEl) {
+                currentTimeEl.textContent = formatTime(track.currentTime);
+            }
+        };
+
+        track.addEventListener('timeupdate', updateProgress);
+
         // Once the audio metadata is loaded, calculate the change interval
-        currentFavSong.addEventListener('loadedmetadata', function () {
-            const duration = currentFavSong.duration; // Total duration of the song
-            const photoChangeInterval = duration / student.studentPhotos.length; // Time per photo
-    
+        track.addEventListener('loadedmetadata', function () {
+            if (durationEl) {
+                durationEl.textContent = formatTime(track.duration);
+            }
+            if (!Number.isFinite(track.duration) || track.duration <= 0) {
+                return;
+            }
+            const photoChangeInterval = track.duration / photos.length; // Time per photo
+
             photoChanger = setInterval(() => {
-                currentIndex = (currentIndex + 1) % student.studentPhotos.length;
-                document.querySelector('.media-content').style.backgroundImage = `url('${student.studentPhotos[currentIndex]}')`;
+                currentIndex = (currentIndex + 1) % photos.length;
+                setPhoto(currentIndex);
             }, photoChangeInterval * 1000); // Convert seconds to milliseconds
-    
+
             // Stop changing photos when the song ends
-            currentFavSong.addEventListener('ended', () => {
+            track.addEventListener('ended', () => {
                 clearInterval(photoChanger);
+                photoChanger = null;
                 overlay.classList.remove('active');
             });
         });
@@ -591,7 +849,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let count = 0;
 
         if(state){
-            currentFavSong.play();
+            currentFavSong.play().catch(() => {});
             currentFavSong.addEventListener('loadedmetadata', function () {
                 const duration = this.duration;
                 const interval = duration / student.studentPhotos.length
