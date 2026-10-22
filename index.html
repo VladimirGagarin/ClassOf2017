@@ -3,25 +3,37 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="color-scheme" content="light dark">
         <meta name="description" content="Relive the memorable times of the Class of 2017. Connect with alumni, share memories, and celebrate the moments that made our journey unforgettable. Lydiah e.t.c">
         <meta name="keywords" content="Class of 2017, alumni 2017, school memories, 2017 graduates, alumni reunion, memorable moments, class reunion, alumni network">
-        <meta name="author" content="Your Name or Website Name">
+        <meta name="author" content="Alumni MMXVII">
         <title>Alumni MMXVII | Class of 2017</title>
+        <link rel="canonical" href="https://classof2017.example.com/">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Alumni MMXVII | Class of 2017">
+        <meta property="og:description" content="Relive the memorable times of the Class of 2017. Connect with alumni, share memories, and celebrate the moments that made our journey unforgettable.">
+        <meta property="og:url" content="https://classof2017.example.com/">
+        <meta property="og:image" content="https://classof2017.example.com/logo.png">
+        <meta property="og:site_name" content="Alumni MMXVII">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Alumni MMXVII | Class of 2017">
+        <meta name="twitter:description" content="Relive the memorable times of the Class of 2017. Connect with alumni, share memories, and celebrate the moments that made our journey unforgettable.">
+        <meta name="twitter:image" content="https://classof2017.example.com/logo.png">
         <link rel="stylesheet" href="style.css">
         <link rel="shortcut icon" href="logo.png" type="image/x-icon">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Alumni MMXVII",
+            "url": "https://classof2017.example.com/",
+            "description": "The Class of 2017 alumni archive: photos, tributes, favourite songs and memories."
+        }
+        </script>
     </head>
     
-<body>
-    <header>
-        <div class="logo">
-          <img src="logo.png" alt="Logo">
-        </div>
-        <div class="title">
-          <h3>Alumni MMXVII | Class of 2017</h3>
-        </div>
-    </header>
-
+<body class="home-page">
     <div class="description-ovelay">
         <div class="descrption-close"><span>&times;</span></div>
         <div class="descrption-content">
@@ -34,28 +46,58 @@
         </div>
     </div>
 
-    <div class="media-overlay">
-        <div class="media-close"><span>&times;</span></div>
+    <div class="media-overlay" role="dialog" aria-modal="true" aria-label="Favourite song player">
+        <button type="button" class="media-close" aria-label="Close favourite song player"><span>&times;</span></button>
         <div class="media-content">
-            <div class="quote-content"></div>
+            <div class="beatsync">
+                <div class="beatsync-photo"></div>
+                <div class="beatsync-glow" aria-hidden="true"></div>
+                <span class="beatsync-badge"><i class="fas fa-music"></i> Now playing</span>
+                <div class="beatsync-eq" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+            <div class="quote-content">
+                <p class="media-kicker">Favourite song</p>
+                <h3 class="media-name">Class of 2017</h3>
+                <p class="media-quote"></p>
+                <div class="media-progress" aria-hidden="true"><span></span></div>
+                <div class="media-times">
+                    <span class="media-current">0:00</span>
+                    <span class="media-duration">0:00</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="loading-animation">
-        <img src="logo.png" alt="Loading Image" loading="eager">
-        <div class="loading-spans">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+        <div class="phone">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+                <div class="phone-status">
+                    <span>MMXVII</span>
+                    <span>2017</span>
+                </div>
+                <img class="phone-logo" src="logo.png" alt="Alumni MMXVII logo" loading="eager">
+                <div class="phone-copy">
+                    <h2>Alumni MMXVII</h2>
+                    <p>Class of 2017</p>
+                </div>
+                <div class="phone-loader" aria-hidden="true">
+                    <span class="phone-spinner"></span>
+                    <span class="phone-progress"><span></span></span>
+                    <p class="phone-loading-text">Loading memories</p>
+                </div>
+                <div class="phone-home"></div>
+            </div>
         </div>
 
-        <div class="controls-actions">
-            <button disabled>Start</button>
-            <button disabled>Trailer</button>
-        </div>
+        <button type="button" class="intro-trailer">
+            <i class="fas fa-play"></i> Watch the trailer
+        </button>
     </div>
     
     <div class="video-overlay">
@@ -82,8 +124,12 @@
           <ul></ul>
         </div>
       </main>
+
+    <footer class="site-footer">
+        <p>Alumni MMXVII &mdash; Class of 2017. <a href="students/">Browse all student profiles</a> &middot; <a href="trailer/">Watch the trailer</a> &middot; <a href="add-student/">Add a new student</a></p>
+    </footer>
       
-      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
