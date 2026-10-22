@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Add a student - Class of 2017 | Alumni MMXVII</title>
+    <meta name="description" content="Submit a missing Class of 2017 student to the alumni archive. Send details by email or WhatsApp.">
+    <meta name="robots" content="index,follow">
+    <link rel="canonical" href="https://classof2017.example.com/add-student/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Add a student - Class of 2017 | Alumni MMXVII">
+    <meta property="og:description" content="Submit a missing Class of 2017 student to the alumni archive. Send details by email or WhatsApp.">
+    <meta property="og:url" content="https://classof2017.example.com/add-student/">
+    <meta property="og:image" content="https://classof2017.example.com/logo.png">
+    <meta property="og:site_name" content="Alumni MMXVII">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Add a student - Class of 2017 | Alumni MMXVII">
+    <meta name="twitter:description" content="Submit a missing Class of 2017 student to the alumni archive. Send details by email or WhatsApp.">
+    <meta name="twitter:image" content="https://classof2017.example.com/logo.png">
+    <link rel="shortcut icon" href="../logo.png" type="image/x-icon">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="profile-page wiki-page add-student-page">
+    <header class="site-header">
+        <a class="site-brand" href="../">
+            <img src="../logo.png" alt="Alumni MMXVII logo">
+            <span>Alumni MMXVII</span>
+        </a>
+        <a class="back-link" href="../"><i class="fas fa-arrow-left"></i> Home</a>
+    </header>
+
+    <main class="profile-main wiki-main add-student-main">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="../">Class of 2017</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Add a student</span>
+        </nav>
+
+        <p class="wiki-hatnote">Know someone missing from the Class of 2017 archive? Fill the form below and send the details to the admin.</p>
+
+        <div class="add-student-layout">
+            <article class="add-student-card">
+                <header class="add-student-header">
+                    <p class="wiki-kicker">Submission form</p>
+                    <h1>Add a student</h1>
+                    <p class="add-student-lead">Provide the details you know. Images and audio files won't be attached by this form—set them to null/text as requested. The message will be converted to JSON.</p>
+                </header>
+
+                <form id="add-student-form" class="add-student-form" novalidate>
+                    <div class="form-grid">
+                        <div class="form-field">
+                            <label for="studentName">Full name <span>*</span></label>
+                            <input id="studentName" name="studentName" type="text" autocomplete="name" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="studentAlias">Alias / nickname</label>
+                            <input id="studentAlias" name="studentAlias" type="text" placeholder="e.g. Tallest">
+                        </div>
+                        <div class="form-field">
+                            <label for="studentAdmissionNumber">Admission number</label>
+                            <input id="studentAdmissionNumber" name="studentAdmissionNumber" type="text" inputmode="numeric" placeholder="e.g. 507">
+                        </div>
+                        <div class="form-field">
+                            <label for="studentRoles">Roles</label>
+                            <input id="studentRoles" name="studentRoles" type="text" placeholder="e.g. Prefect, Team leader">
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="studentDescription">Description <span>*</span></label>
+                            <textarea id="studentDescription" name="studentDescription" rows="5" required placeholder="Tell us about this student..."></textarea>
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="studentQuote">Quote</label>
+                            <textarea id="studentQuote" name="studentQuote" rows="3" placeholder="Favourite quote or memorable words"></textarea>
+                        </div>
+                        <div class="form-field">
+                            <label for="studentFavColor">Favourite colour</label>
+                            <input id="studentFavColor" name="studentFavColor" type="text" placeholder="e.g. Blue or #0056b3">
+                        </div>
+                        <div class="form-field">
+                            <label for="studentFavSong">Favourite song</label>
+                            <input id="studentFavSong" name="studentFavSong" type="text" placeholder="Song name or link as text">
+                            <p class="form-help">Audio files are not uploaded. Provide song name/link as text.</p>
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="studentPhotos">Photos</label>
+                            <input id="studentPhotos" name="studentPhotos" type="text" value="null" readonly>
+                            <p class="form-help">Images will be sent as null.</p>
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="studentAudioReader">Tribute audio</label>
+                            <input id="studentAudioReader" name="studentAudioReader" type="text" value="null" readonly>
+                            <p class="form-help">Audio will be sent as null.</p>
+                        </div>
+                        <div class="form-field form-field-full">
+                            <label for="submittedBy">Your name/contact (optional)</label>
+                            <input id="submittedBy" name="submittedBy" type="text" placeholder="Helps the admin follow up">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="form-btn form-btn-primary" type="button" data-send-email>
+                            <i class="fas fa-envelope"></i> Send via Email
+                        </button>
+                        <button class="form-btn form-btn-whatsapp" type="button" data-send-whatsapp>
+                            <i class="fab fa-whatsapp"></i> Send via WhatsApp
+                        </button>
+                        <button class="form-btn form-btn-ghost" type="reset">
+                            <i class="fas fa-rotate-left"></i> Reset
+                        </button>
+                    </div>
+                    <p class="form-status" id="form-status" aria-live="polite"></p>
+                </form>
+            </article>
+
+            <aside class="add-student-aside">
+                <div class="add-student-card add-student-panel">
+                    <h2>How it works</h2>
+                    <ol>
+                        <li>Fill in what you know about the student.</li>
+                        <li>Choose Email or WhatsApp to send the submission.</li>
+                        <li>The form converts all details to JSON and sends to the admin.</li>
+                    </ol>
+                    <div class="add-student-contacts">
+                        <p><strong>Email:</strong> <a href="mailto:kelvineinstein100@gmail.com">kelvineinstein100@gmail.com</a></p>
+                        <p><strong>WhatsApp:</strong> <a href="https://wa.me/254741146031" target="_blank" rel="noopener">+254741146031</a></p>
+                    </div>
+                    <p class="form-help">studentPhotos: null &nbsp;|&nbsp; studentAudioReader: null &nbsp;|&nbsp; studentFavSong: text</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>Alumni MMXVII &mdash; Class of 2017. <a href="../">Home</a> &middot; <a href="../students/">Browse all students</a> &middot; <a href="../trailer/">Watch the trailer</a></p>
+    </footer>
+
+    <script src="add-student.js"></script>
+</body>
+</html>
